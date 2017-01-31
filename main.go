@@ -75,7 +75,8 @@ func echo(w http.ResponseWriter, req *http.Request) {
 	sort.Strings(keys)
 	fmt.Fprintln(w, "<table>")
 	fmt.Fprintln(w, `<tr class="header"><td>Header</td><td>Value</td></tr>`)
-	for key, values := range req.Header {
+	for _, key := range keys {
+		values := req.Header[key]
 		sort.Strings(values)
 		fmt.Fprintf(w, "<tr><td>%v</td><td>%v</td></tr>\n", key, strings.Join(values, ", "))
 	}
