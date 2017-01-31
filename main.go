@@ -68,14 +68,14 @@ func echo(w http.ResponseWriter, req *http.Request) {
 
 	// -- Headers --------------------------------------------
 
-	keys := make([]string, 0, len(w.Header()))
-	for key := range w.Header() {
+	keys := make([]string, 0, len(req.Header))
+	for key := range req.Header {
 		keys = append(keys, key)
 	}
 	sort.Strings(keys)
 	fmt.Fprintln(w, "<table>")
 	fmt.Fprintln(w, `<tr class="header"><td>Header</td><td>Value</td></tr>`)
-	for key, values := range w.Header() {
+	for key, values := range req.Header {
 		sort.Strings(values)
 		fmt.Fprintf(w, "<tr><td>%v</td><td>%v</td></tr>\n", key, strings.Join(values, ", "))
 	}
