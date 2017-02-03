@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func echo(w http.ResponseWriter, req *http.Request) {
@@ -85,6 +87,11 @@ func echo(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintln(w, "</body>")
 	fmt.Fprintln(w, "</html>")
 
+	json.NewEncoder(os.Stdout).Encode(map[string]interface{}{
+		"timestamp": time.Now().Format("2006-01-02T15:04:05.000000Z"),
+		"method":    req.Method,
+		"path":      req.URL.Path,
+	})
 }
 
 func check(err error) {
@@ -94,10 +101,12 @@ func check(err error) {
 }
 
 func main() {
-	port, err := strconv.Atoi(os.Getenv("PORT"))
-	check(err)
+	port := 3000
+	if v, err := strconv.Atoi(os.Getenv("PORT")); err == nil {
+		port = v
+	}
 
 	http.HandleFunc("/", echo)
-	err = http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
+	err := http.ListenAndServe(fmt.Sprintf(":%v", port), nil)
 	check(err)
 }
